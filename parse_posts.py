@@ -58,7 +58,7 @@ for idx, filename in enumerate(md_files):
 
     name_for_cover = filename.replace('.md', '').split('.', 1)[-1]
     color = colors[idx % len(colors)]
-    placeholder_url = f'https://via.placeholder.com/400x440/{color}/FFFFFF?text={name_for_cover[:4]}'
+    placeholder_url = f'https://placehold.co/400x440/{color}/FFFFFF?text={name_for_cover[:4]}'
 
     post = {
         "title": title,
