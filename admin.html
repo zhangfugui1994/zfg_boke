@@ -471,6 +471,8 @@
                 <h1><i class="ri-settings-3-line"></i> 编辑网站内容</h1>
                 <div class="admin-actions">
                     <button class="btn btn-outline" onclick="resetAll()"><i class="ri-refresh-line"></i> 恢复默认</button>
+                    <button class="btn btn-outline" onclick="downloadScriptJS()"><i class="ri-git-commit-line"></i> 生成 script.js</button>
+                    <button class="btn btn-outline" onclick="generatePushBatch()"><i class="ri-upload-cloud-2-line"></i> 生成推送脚本</button>
                     <button class="btn btn-danger" onclick="exportHTML()"><i class="ri-download-line"></i> 导出网站</button>
                     <button class="btn btn-primary" onclick="saveAll()"><i class="ri-save-line"></i> 保存</button>
                 </div>
@@ -1118,6 +1120,167 @@ document.getElementById('footerInfo').textContent='${edits['edit_footer_info'] |
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+    }
+
+    // ===== 生成并下载 script.js =====
+    function downloadScriptJS() {
+        // 收集当前所有编辑数据
+        const edits = {};
+        localStorage.forEach((val, key) => { edits[key] = val; });
+
+        // 收集文章数据
+        const articles = posts.map(p => ({
+            title: p.title,
+            subtitle: p.subtitle,
+            size: p.size,
+            cover_image: p.cover_image,
+            share_link: p.share_link,
+            name: p.name,
+            updated: p.updated
+        }));
+
+        // 生成 script.js 内容（参考原 script.js 结构）
+        const scriptContent = `// 网站数据
+const productsData = ${JSON.stringify(articles, null, 2)};
+let posts = JSON.parse(JSON.stringify(productsData));
+
+// 站点配置
+const siteConfig = {
+    site_name: '${(edits['edit_site_name'] || '商品目录').replace(/'/g, "\\'")}',
+    footer_name: '${(edits['edit_footer_name'] || 'MySite').replace(/'/g, "\\'")}',
+    footer_info: '${(edits['edit_footer_info'] || '').replace(/'/g, "\\'")}'
+};
+
+// 导航配置
+const navConfig = {
+    nav_1: '${(edits['edit_nav_1'] || '主页').replace(/'/g, "\\'")}',
+    nav_2: '${(edits['edit_nav_2'] || '防丢找回').replace(/'/g, "\\'")}',
+    nav_3: '${(edits['edit_nav_3'] || '积分领取').replace(/'/g, "\\'")}'
+};
+
+// 轮播图配置
+const slideConfig = {
+    slide_1_title: '${(edits['edit_slide_1_title'] || '标题').replace(/'/g, "\\'")}',
+    slide_1_author: '${(edits['edit_slide_1_author'] || '作者').replace(/'/g, "\\'")}',
+    slide_1_date: '${(edits['edit_slide_1_date'] || '日期').replace(/'/g, "\\'")}',
+    slide_img_1: '${(edits['edit_slide_img_1'] || '').replace(/'/g, "\\'")}',
+    slide_2_title: '${(edits['edit_slide_2_title'] || '标题').replace(/'/g, "\\'")}',
+    slide_2_author: '${(edits['edit_slide_2_author'] || '作者').replace(/'/g, "\\'")}',
+    slide_2_date: '${(edits['edit_slide_2_date'] || '日期').replace(/'/g, "\\'")}',
+    slide_img_2: '${(edits['edit_slide_img_2'] || '').replace(/'/g, "\\'")}',
+    slide_3_title: '${(edits['edit_slide_3_title'] || '标题').replace(/'/g, "\\'")}',
+    slide_3_author: '${(edits['edit_slide_3_author'] || '作者').replace(/'/g, "\\'")}',
+    slide_3_date: '${(edits['edit_slide_3_date'] || '日期').replace(/'/g, "\\'")}',
+    slide_img_3: '${(edits['edit_slide_img_3'] || '').replace(/'/g, "\\'")}'
+};
+
+// 广告配置
+const adConfig = {
+    ad_img: '${(edits['edit_ad_img'] || '').replace(/'/g, "\\'")}'
+};
+
+// 将配置合并到 localStorage
+localStorage.setItem('edit_site_name', siteConfig.site_name);
+localStorage.setItem('edit_footer_name', siteConfig.footer_name);
+localStorage.setItem('edit_footer_info', siteConfig.footer_info);
+localStorage.setItem('edit_nav_1', navConfig.nav_1);
+localStorage.setItem('edit_nav_2', navConfig.nav_2);
+localStorage.setItem('edit_nav_3', navConfig.nav_3);
+localStorage.setItem('edit_slide_1_title', slideConfig.slide_1_title);
+localStorage.setItem('edit_slide_1_author', slideConfig.slide_1_author);
+localStorage.setItem('edit_slide_1_date', slideConfig.slide_1_date);
+localStorage.setItem('edit_slide_img_1', slideConfig.slide_img_1);
+localStorage.setItem('edit_slide_2_title', slideConfig.slide_2_title);
+localStorage.setItem('edit_slide_2_author', slideConfig.slide_2_author);
+localStorage.setItem('edit_slide_2_date', slideConfig.slide_2_date);
+localStorage.setItem('edit_slide_img_2', slideConfig.slide_img_2);
+localStorage.setItem('edit_slide_3_title', slideConfig.slide_3_title);
+localStorage.setItem('edit_slide_3_author', slideConfig.slide_3_author);
+localStorage.setItem('edit_slide_3_date', slideConfig.slide_3_date);
+localStorage.setItem('edit_slide_img_3', slideConfig.slide_img_3);
+localStorage.setItem('edit_ad_img', adConfig.ad_img);
+localStorage.setItem('slide_img_1', slideConfig.slide_img_1);
+localStorage.setItem('slide_img_2', slideConfig.slide_img_2);
+localStorage.setItem('slide_img_3', slideConfig.slide_img_3);
+localStorage.setItem('ad_img', adConfig.ad_img);
+`;
+
+        const blob = new Blob([scriptContent], { type: 'text/javascript;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'script.js';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        alert('script.js 已下载！请将其复制到网站目录，提交到 GitHub 仓库即可部署。');
+    }
+
+    // ===== 生成一键推送脚本 =====
+    function generatePushBatch() {
+        // 收集当前所有编辑数据
+        const edits = {};
+        localStorage.forEach((val, key) => { edits[key] = val; });
+
+        // 收集文章数据
+        const articles = posts.map(p => ({
+            title: p.title,
+            subtitle: p.subtitle,
+            size: p.size,
+            cover_image: p.cover_image,
+            share_link: p.share_link,
+            name: p.name,
+            updated: p.updated
+        }));
+
+        // 生成 script.js 内容
+        const scriptContent = `// 商品数据（由 parse_posts.py 自动生成，直接嵌入）
+const productsData = ${JSON.stringify(articles, null, 2)};
+let posts = JSON.parse(JSON.stringify(productsData));
+`;
+
+        // 同时下载 script.js
+        const jsBlob = new Blob([scriptContent], { type: 'text/javascript;charset=utf-8' });
+        const jsUrl = URL.createObjectURL(jsBlob);
+        const a1 = document.createElement('a');
+        a1.href = jsUrl;
+        a1.download = 'script.js';
+        document.body.appendChild(a1);
+        a1.click();
+        document.body.removeChild(a1);
+        URL.revokeObjectURL(jsUrl);
+
+        // 生成 bat 脚本内容（只含 git 命令）
+        const batContent = '@echo off\r\nchcp 65001 >nul\r\n' +
+            'echo 正在推送更新到 GitHub...\r\n' +
+            'echo.\r\n' +
+            ':: 确保 script.js 已复制到网站目录\r\n' +
+            'if not exist script.js (\r\n' +
+            '    echo 错误：找不到 script.js 文件！\r\n' +
+            '    echo 请先将下载的 script.js 放到此 bat 文件同级目录\r\n' +
+            '    pause\r\n' +
+            '    exit /b\r\n' +
+            ')\r\n' +
+            'git add script.js\r\n' +
+            'git commit -m "update: 从管理面板推送 %date% %time%"^>\r\n' +
+            'git push origin main\r\n' +
+            'echo.\r\n' +
+            'echo 推送完成！等待 Cloudflare 部署约 1-3 分钟。\r\n' +
+            'pause\r\n';
+
+        const batBlob = new Blob([batContent], { type: 'application/octet-stream' });
+        const batUrl = URL.createObjectURL(batBlob);
+        const a2 = document.createElement('a');
+        a2.href = batUrl;
+        a2.download = 'push-to-github.bat';
+        document.body.appendChild(a2);
+        a2.click();
+        document.body.removeChild(a2);
+        URL.revokeObjectURL(batUrl);
+
+        alert('script.js 和 push-to-github.bat 已下载！\n\n使用方法：\n1. 将 script.js 复制到网站目录（和 index.html 同级）\n2. 将 push-to-github.bat 也放到同一目录\n3. 双击运行 push-to-github.bat\n4. 等待 Cloudflare Pages 部署完成（约1-3分钟）');
     }
 
     // ===== 侧边栏导航高亮 =====
