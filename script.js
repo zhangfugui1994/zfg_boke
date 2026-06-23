@@ -92,6 +92,67 @@ const productsData = [
   }
 ];
 
+
+
+// 站点配置（由管理面板自动生成）
+const siteConfig = {
+    site_name: '初恋の奇妙屋',
+    footer_name: 'CHULIAN',
+    footer_info: ''
+};
+
+// 导航配置
+const navConfig = {
+    nav_1: '主页',
+    nav_2: '防丢找回',
+    nav_3: '积分领取'
+};
+
+// 轮播图配置
+const slideConfig = {
+    slide_1_title: '**爆奶御姐 孙禾颐 最新福利作品大合集 百变骚姿大秀绝美鲍鱼 棒棒糖狂撩阴蒂 手指假屌轮番自慰 撸点密集帧帧淫爆！【全75G】',
+    slide_1_author: 'CHULIAN',
+    slide_1_date: '2025/6/23',
+    slide_img_1: '',
+    slide_2_title: '推特巨乳博主 Cocopie0218 新作流出 性感睡裙半透巨乳晃荡 按摩棒猛插骚穴白浆狂喷 淫水泛滥拉丝！【全12G】',
+    slide_2_author: 'CHULIAN',
+    slide_2_date: '2025/6/23',
+    slide_img_2: '',
+    slide_3_title: '**巨乳网黄 情深叉喔 肥宅的性幻想女友 化身魅魔满足痴汉肉棒 多姿势性爱彻底沉沦高潮无法自拔【全731.31G】',
+    slide_3_author: 'CHULIAN',
+    slide_3_date: '2025/6/23',
+    slide_img_3: ''  
+};
+
+// 广告配置
+const adConfig = {
+    ad_img: ''
+};
+
+// 将配置写入 localStorage
+localStorage.setItem('edit_site_name', siteConfig.site_name);
+localStorage.setItem('edit_footer_name', siteConfig.footer_name);
+localStorage.setItem('edit_footer_info', siteConfig.footer_info);
+localStorage.setItem('edit_nav_1', navConfig.nav_1);
+localStorage.setItem('edit_nav_2', navConfig.nav_2);
+localStorage.setItem('edit_nav_3', navConfig.nav_3);
+localStorage.setItem('edit_slide_1_title', slideConfig.slide_1_title);
+localStorage.setItem('edit_slide_1_author', slideConfig.slide_1_author);
+localStorage.setItem('edit_slide_1_date', slideConfig.slide_1_date);
+localStorage.setItem('edit_slide_img_1', slideConfig.slide_img_1);
+localStorage.setItem('edit_slide_2_title', slideConfig.slide_2_title);
+localStorage.setItem('edit_slide_2_author', slideConfig.slide_2_author);
+localStorage.setItem('edit_slide_2_date', slideConfig.slide_2_date);
+localStorage.setItem('edit_slide_img_2', slideConfig.slide_img_2);
+localStorage.setItem('edit_slide_3_title', slideConfig.slide_3_title);
+localStorage.setItem('edit_slide_3_author', slideConfig.slide_3_author);
+localStorage.setItem('edit_slide_3_date', slideConfig.slide_3_date);
+localStorage.setItem('edit_slide_img_3', slideConfig.slide_img_3);
+localStorage.setItem('edit_ad_img', adConfig.ad_img);
+localStorage.setItem('slide_img_1', slideConfig.slide_img_1);
+localStorage.setItem('slide_img_2', slideConfig.slide_img_2);
+localStorage.setItem('slide_img_3', slideConfig.slide_img_3);
+localStorage.setItem('ad_img', adConfig.ad_img);
 let posts = JSON.parse(JSON.stringify(productsData));
 let slideIndex = 0;
 let slideTimer;
