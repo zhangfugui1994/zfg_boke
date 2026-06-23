@@ -113,15 +113,15 @@ const slideConfig = {
     slide_1_title: '**爆奶御姐 孙禾颐 最新福利作品大合集 百变骚姿大秀绝美鲍鱼 棒棒糖狂撩阴蒂 手指假屌轮番自慰 撸点密集帧帧淫爆！【全75G】',
     slide_1_author: 'CHULIAN',
     slide_1_date: '2025/6/23',
-    slide_img_1: '',
+    slide_img_1: 'https://tuchuang-aac.pages.dev/api/cfile/AgACAgUAAyEGAATrbgq5AAICTmo5w0pXbdmmISFn8qVzXzx4DafMAAIHFGsberXJVc2RdT7SE6AkAQADAgADeQADPAQ',
     slide_2_title: '推特巨乳博主 Cocopie0218 新作流出 性感睡裙半透巨乳晃荡 按摩棒猛插骚穴白浆狂喷 淫水泛滥拉丝！【全12G】',
     slide_2_author: 'CHULIAN',
     slide_2_date: '2025/6/23',
-    slide_img_2: '',
+    slide_img_2: 'https://tuchuang-aac.pages.dev/api/cfile/AgACAgUAAyEGAATrbgq5AAICUGo5w059EW2_GJ6IX4LvQutaZuvwAAIJFGsberXJVf1TC3IUYXKRAQADAgADeQADPAQ',
     slide_3_title: '**巨乳网黄 情深叉喔 肥宅的性幻想女友 化身魅魔满足痴汉肉棒 多姿势性爱彻底沉沦高潮无法自拔【全731.31G】',
     slide_3_author: 'CHULIAN',
     slide_3_date: '2025/6/23',
-    slide_img_3: ''  
+    slide_img_3: 'https://tuchuang-aac.pages.dev/api/cfile/AgACAgUAAyEGAATrbgq5AAICT2o5w0zqdBjdB2JRINx7rokYX9NwAAIIFGsberXJVegvITnyWvniAQADAgADdwADPAQ'  
 };
 
 // 广告配置
