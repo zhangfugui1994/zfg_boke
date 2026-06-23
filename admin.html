@@ -505,10 +505,6 @@
                         <label>导航2</label>
                         <input type="text" id="edit_nav_2" data-target="nav_2" placeholder="防丢找回">
                     </div>
-                    <div class="form-group">
-                        <label>导航3</label>
-                        <input type="text" id="edit_nav_3" data-target="nav_3" placeholder="积分领取">
-                    </div>
                 </div>
             </div>
 
@@ -1160,8 +1156,7 @@ const siteConfig = {
 // 导航配置
 const navConfig = {
     nav_1: '${(edits['edit_nav_1'] || '主页').replace(/'/g, "\\'")}',
-    nav_2: '${(edits['edit_nav_2'] || '防丢找回').replace(/'/g, "\\'")}',
-    nav_3: '${(edits['edit_nav_3'] || '积分领取').replace(/'/g, "\\'")}'
+    nav_2: '${(edits['edit_nav_2'] || '防丢找回').replace(/'/g, "\\'")}'
 };
 
 // 轮播图配置
@@ -1191,7 +1186,6 @@ localStorage.setItem('edit_footer_name', siteConfig.footer_name);
 localStorage.setItem('edit_footer_info', siteConfig.footer_info);
 localStorage.setItem('edit_nav_1', navConfig.nav_1);
 localStorage.setItem('edit_nav_2', navConfig.nav_2);
-localStorage.setItem('edit_nav_3', navConfig.nav_3);
 localStorage.setItem('edit_slide_1_title', slideConfig.slide_1_title);
 localStorage.setItem('edit_slide_1_author', slideConfig.slide_1_author);
 localStorage.setItem('edit_slide_1_date', slideConfig.slide_1_date);
@@ -1329,7 +1323,6 @@ localStorage.setItem('ad_img', adConfig.ad_img);
                 'const navConfig = {\n' +
                 '    nav_1: \'' + (edits['edit_nav_1'] || '主页').replace(/'/g, "\\'") + '\',\n' +
                 '    nav_2: \'' + (edits['edit_nav_2'] || '防丢找回').replace(/'/g, "\\'") + '\',\n' +
-                '    nav_3: \'' + (edits['edit_nav_3'] || '积分领取').replace(/'/g, "\\'") + '\'\n' +
                 '};\n\n' +
                 '// 轮播图配置\n' +
                 'const slideConfig = {\n' +
@@ -1356,7 +1349,6 @@ localStorage.setItem('ad_img', adConfig.ad_img);
                 'localStorage.setItem(\'edit_footer_info\', siteConfig.footer_info);\n' +
                 'localStorage.setItem(\'edit_nav_1\', navConfig.nav_1);\n' +
                 'localStorage.setItem(\'edit_nav_2\', navConfig.nav_2);\n' +
-                'localStorage.setItem(\'edit_nav_3\', navConfig.nav_3);\n' +
                 'localStorage.setItem(\'edit_slide_1_title\', slideConfig.slide_1_title);\n' +
                 'localStorage.setItem(\'edit_slide_1_author\', slideConfig.slide_1_author);\n' +
                 'localStorage.setItem(\'edit_slide_1_date\', slideConfig.slide_1_date);\n' +

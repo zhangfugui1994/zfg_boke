@@ -194,8 +194,7 @@ const siteConfig = {
 // 导航配置
 const navConfig = {
     nav_1: '主页',
-    nav_2: '防丢找回',
-    nav_3: '积分领取'
+    nav_2: '防丢找回'
 };
 
 // 轮播图配置
@@ -225,7 +224,6 @@ localStorage.setItem('edit_footer_name', siteConfig.footer_name);
 localStorage.setItem('edit_footer_info', siteConfig.footer_info);
 localStorage.setItem('edit_nav_1', navConfig.nav_1);
 localStorage.setItem('edit_nav_2', navConfig.nav_2);
-localStorage.setItem('edit_nav_3', navConfig.nav_3);
 localStorage.setItem('edit_slide_1_title', slideConfig.slide_1_title);
 localStorage.setItem('edit_slide_1_author', slideConfig.slide_1_author);
 localStorage.setItem('edit_slide_1_date', slideConfig.slide_1_date);
@@ -244,13 +242,18 @@ localStorage.setItem('slide_img_2', slideConfig.slide_img_2);
 localStorage.setItem('slide_img_3', slideConfig.slide_img_3);
 localStorage.setItem('ad_img', adConfig.ad_img);
 let posts = JSON.parse(JSON.stringify(productsData));
+let filteredPosts = [...posts];
+let currentPage = 1;
+const PAGE_SIZE = 12;
 let slideIndex = 0;
 let slideTimer;
 
 // 直接从嵌入的数据加载商品
 function loadProducts() {
+    filteredPosts = [...posts];
     renderPosts();
     renderPostsEditList();
+    initSearch();
 }
 
 // ========== 页面加载 ==========
@@ -311,23 +314,21 @@ function toggleSubmenu(e, el) {
 // ========== 渲染商品列表 ==========
 function renderPosts() {
     const grid = document.getElementById('postsGrid');
-    if (!posts || posts.length === 0) {
-        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:#999;">暂无商品，请确保"商品目录.json"文件存在</p>';
+    if (!filteredPosts || filteredPosts.length === 0) {
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:#999;">没有找到相关文章</p>';
+        renderPagination(0);
         return;
     }
 
-    grid.innerHTML = posts.map((p, i) => {
-        // 解析评分信息
-        let looks = '0', figure = '0', rarity = '';
-        if (p.subtitle) {
-            const parts = p.subtitle.split('|');
-            if (parts[0]) looks = parts[0].replace(/颜值[\s:]*/g, '').trim();
-            if (parts[1]) figure = parts[1].replace(/身材[\s:]*/g, '').trim();
-            if (parts[2]) rarity = parts[2].replace(/稀缺度[\s:]*/g, '').trim();
-        }
+    const totalPages = Math.ceil(filteredPosts.length / PAGE_SIZE);
+    if (currentPage > totalPages) currentPage = totalPages;
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const pagePosts = filteredPosts.slice(start, start + PAGE_SIZE);
 
+    grid.innerHTML = pagePosts.map((p, i) => {
+        const globalIndex = posts.indexOf(p);
         return `
-        <article class="post-card" data-index="${i}">
+        <article class="post-card" data-index="${globalIndex}">
             <div class="post-thumb">
                 <a href="${escapeHtml(p.share_link || '#')}" target="_blank" class="thumb-link">
                     <img src="${escapeHtml(p.cover_image)}" alt="${escapeHtml(p.name)}" loading="lazy">
@@ -335,11 +336,6 @@ function renderPosts() {
             </div>
             <div class="post-info">
                 <h3><a href="${escapeHtml(p.share_link || '#')}" target="_blank">${escapeHtml(p.name)}</a></h3>
-                <div class="post-tags">
-                    <span class="tag tag-looks">颜值 ${escapeHtml(looks)}</span>
-                    <span class="tag tag-figure">身材 ${escapeHtml(figure)}</span>
-                    <span class="tag tag-rarity">${escapeHtml(rarity)}</span>
-                </div>
                 <div class="post-meta">
                     <span class="post-size"><i class="ri-hard-drive-2-line"></i> ${escapeHtml(p.size || '')}</span>
                     <time>${escapeHtml(p.updated ? new Date(p.updated).toLocaleDateString('zh-CN') : '')}</time>
@@ -347,6 +343,8 @@ function renderPosts() {
             </div>
         </article>`;
     }).join('');
+
+    renderPagination(totalPages);
 
     // 滚动动画
     if ('IntersectionObserver' in window) {
@@ -368,6 +366,78 @@ function renderPosts() {
             observer.observe(card);
         });
     }
+}
+
+function renderPagination(totalPages) {
+    let pager = document.getElementById('pagination');
+    if (!pager) {
+        pager = document.createElement('div');
+        pager.id = 'pagination';
+        pager.className = 'pagination';
+        document.querySelector('.posts-section').appendChild(pager);
+    }
+    if (totalPages <= 1) {
+        pager.innerHTML = '';
+        return;
+    }
+
+    let html = '<div class="page-btns">';
+    // 上一页
+    if (currentPage > 1) {
+        html += `<span class="page-btn active" data-page="${currentPage - 1}">«</span>`;
+    }
+    // 页码
+    const maxVisible = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+    if (endPage - startPage < maxVisible - 1) startPage = Math.max(1, endPage - maxVisible + 1);
+
+    if (startPage > 1) {
+        html += `<span class="page-btn" data-page="1">1</span>`;
+        if (startPage > 2) html += `<span class="page-ellipsis">…</span>`;
+    }
+    for (let i = startPage; i <= endPage; i++) {
+        html += `<span class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</span>`;
+    }
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) html += `<span class="page-ellipsis">…</span>`;
+        html += `<span class="page-btn" data-page="${totalPages}">${totalPages}</span>`;
+    }
+    // 下一页
+    if (currentPage < totalPages) {
+        html += `<span class="page-btn active" data-page="${currentPage + 1}">»</span>`;
+    }
+    html += '</div>';
+    pager.innerHTML = html;
+
+    pager.querySelectorAll('.page-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            currentPage = parseInt(this.dataset.page);
+            renderPosts();
+            document.querySelector('.posts-section').scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+}
+
+// ========== 搜索 ==========
+function initSearch() {
+    const searchInput = document.querySelector('.search-box input');
+    const searchBtn = document.querySelector('.search-box button');
+    if (!searchInput) return;
+
+    function doSearch() {
+        const keyword = searchInput.value.trim().toLowerCase();
+        if (!keyword) {
+            filteredPosts = [...posts];
+        } else {
+            filteredPosts = posts.filter(p => p.name.toLowerCase().includes(keyword) || p.title.toLowerCase().includes(keyword));
+        }
+        currentPage = 1;
+        renderPosts();
+    }
+
+    searchInput.addEventListener('input', doSearch);
+    if (searchBtn) searchBtn.addEventListener('click', doSearch);
 }
 
 // ========== 渲染商品编辑列表 ==========
@@ -414,25 +484,32 @@ function escapeHtml(text) {
 function updatePost(index, field, value) {
     if (!posts[index]) return;
     posts[index][field] = value;
+    filteredPosts = [...posts];
+    currentPage = 1;
     renderPosts();
 }
 
 function removePost(index) {
     if (confirm('确定删除这个商品吗？')) {
         posts.splice(index, 1);
+        filteredPosts = [...posts];
+        currentPage = 1;
         renderPosts();
         renderPostsEditList();
     }
 }
 
 function addPost() {
-    posts.unshift({
+    const newPost = {
         title: "新商品标题",
         cover_image: "https://placehold.co/400x440/CCCCCC/FFFFFF?text=New",
         share_link: "#",
         size: "",
         name: "新商品"
-    });
+    };
+    posts.unshift(newPost);
+    filteredPosts = [...posts];
+    currentPage = 1;
     renderPosts();
     renderPostsEditList();
     setTimeout(() => {

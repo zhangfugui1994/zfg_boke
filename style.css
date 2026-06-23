@@ -418,35 +418,6 @@ img { max-width: 100%; display: block; }
 
 .post-info h3 a:hover { color: var(--primary); }
 
-.post-tags {
-    display: flex;
-    gap: 4px;
-    flex-wrap: wrap;
-    margin-bottom: 6px;
-}
-
-.tag {
-    font-size: 11px;
-    padding: 1px 6px;
-    border-radius: 3px;
-    font-weight: 500;
-}
-
-.tag-looks {
-    background: #fff3e0;
-    color: #e65100;
-}
-
-.tag-figure {
-    background: #fce4ec;
-    color: #c62828;
-}
-
-.tag-rarity {
-    background: #e8f5e9;
-    color: #2e7d32;
-}
-
 .post-meta {
     display: flex;
     align-items: center;
@@ -469,6 +440,54 @@ img { max-width: 100%; display: block; }
 
 .post-size i {
     margin-right: 2px;
+}
+
+/* ========== 分页 ========== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0 40px;
+}
+
+.page-btns {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.page-btn {
+    min-width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: var(--transition);
+    background: var(--white);
+    user-select: none;
+}
+
+.page-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.page-btn.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--white);
+}
+
+.page-ellipsis {
+    padding: 0 4px;
+    color: var(--text-muted);
+    font-size: 13px;
 }
 
 /* ========== 底部 ========== */
