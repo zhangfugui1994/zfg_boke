@@ -1279,17 +1279,24 @@ localStorage.setItem('ad_img', adConfig.ad_img);
             };
         });
 
-        var scriptContent = '// 商品数据（由管理面板自动生成）\n' +
-            'const productsData = ' + JSON.stringify(articles, null, 2) + ';\n' +
-            'let posts = JSON.parse(JSON.stringify(productsData));\n';
-
-        // 先获取 script.js 的 SHA
+        // 先获取原始 script.js，只替换 productsData 数组，保留渲染逻辑
         fetch('https://api.github.com/repos/zhangfugui1994/zfg_boke/contents/script.js', {
             headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github.v3+json' }
         })
         .then(function(r) { return r.json(); })
-        .then(function(data) {
-            var sha = data.sha || null;
+        .then(function(fileData) {
+            var sha = fileData.sha;
+            var originalContent = decodeURIComponent(escape(atob(fileData.content)));
+
+            // 找到 productsData 数组的范围并替换
+            var dataStart = originalContent.indexOf('const productsData = ');
+            var dataEnd = originalContent.indexOf('\nlet posts =');
+            if (dataStart === -1 || dataEnd === -1) {
+                throw new Error('无法定位 productsData 数组位置');
+            }
+
+            var newDataBlock = 'const productsData = ' + JSON.stringify(articles, null, 2) + ';\n';
+            var newContent = originalContent.substring(0, dataStart) + newDataBlock + originalContent.substring(dataEnd);
 
             // 创建/更新文件
             return fetch('https://api.github.com/repos/zhangfugui1994/zfg_boke/contents/script.js', {
@@ -1301,8 +1308,8 @@ localStorage.setItem('ad_img', adConfig.ad_img);
                 },
                 body: JSON.stringify({
                     message: 'update: 从管理面板推送',
-                    content: btoa(unescape(encodeURIComponent(scriptContent))),
-                    ...(sha ? { sha: sha } : {})
+                    content: btoa(unescape(encodeURIComponent(newContent))),
+                    sha: sha
                 })
             });
         })
