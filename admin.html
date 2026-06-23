@@ -1139,6 +1139,12 @@ document.getElementById('footerInfo').textContent='${edits['edit_footer_info'] |
             updated: p.updated
         }));
 
+        // 从 localStorage 读取图片 URL（saveAll() 存的是 slide_img_N）
+        const slideImg1 = localStorage.getItem('slide_img_1') || edits['edit_slide_img_1'] || '';
+        const slideImg2 = localStorage.getItem('slide_img_2') || edits['edit_slide_img_2'] || '';
+        const slideImg3 = localStorage.getItem('slide_img_3') || edits['edit_slide_img_3'] || '';
+        const adImg = localStorage.getItem('ad_img') || '';
+
         // 生成 script.js 内容（参考原 script.js 结构）
         const scriptContent = `// 网站数据
 const productsData = ${JSON.stringify(articles, null, 2)};
@@ -1163,20 +1169,20 @@ const slideConfig = {
     slide_1_title: '${(edits['edit_slide_1_title'] || '标题').replace(/'/g, "\\'")}',
     slide_1_author: '${(edits['edit_slide_1_author'] || '作者').replace(/'/g, "\\'")}',
     slide_1_date: '${(edits['edit_slide_1_date'] || '日期').replace(/'/g, "\\'")}',
-    slide_img_1: '${(edits['edit_slide_img_1'] || '').replace(/'/g, "\\'")}',
+    slide_img_1: '${slideImg1.replace(/'/g, "\\'")}',
     slide_2_title: '${(edits['edit_slide_2_title'] || '标题').replace(/'/g, "\\'")}',
     slide_2_author: '${(edits['edit_slide_2_author'] || '作者').replace(/'/g, "\\'")}',
     slide_2_date: '${(edits['edit_slide_2_date'] || '日期').replace(/'/g, "\\'")}',
-    slide_img_2: '${(edits['edit_slide_img_2'] || '').replace(/'/g, "\\'")}',
+    slide_img_2: '${slideImg2.replace(/'/g, "\\'")}',
     slide_3_title: '${(edits['edit_slide_3_title'] || '标题').replace(/'/g, "\\'")}',
     slide_3_author: '${(edits['edit_slide_3_author'] || '作者').replace(/'/g, "\\'")}',
     slide_3_date: '${(edits['edit_slide_3_date'] || '日期').replace(/'/g, "\\'")}',
-    slide_img_3: '${(edits['edit_slide_img_3'] || '').replace(/'/g, "\\'")}'
+    slide_img_3: '${slideImg3.replace(/'/g, "\\'")}'
 };
 
 // 广告配置
 const adConfig = {
-    ad_img: '${(edits['edit_ad_img'] || '').replace(/'/g, "\\'")}'
+    ad_img: '${adImg.replace(/'/g, "\\'")}'
 };
 
 // 将配置合并到 localStorage
@@ -1306,6 +1312,13 @@ localStorage.setItem('ad_img', adConfig.ad_img);
             var newContent = originalContent.substring(0, dataStart) + newDataBlock + originalContent.substring(dataEnd);
 
             // 在 let posts = 后面追加 localStorage 初始化代码
+            // 注意：图片 URL 在 saveAll() 中存储为 'slide_img_N'，但 edits 只包含 localStorage 当前值
+            // 所以需要单独从 localStorage 读取图片 URL
+            var slideImg1 = localStorage.getItem('slide_img_1') || localStorage.getItem('edit_slide_img_1') || '';
+            var slideImg2 = localStorage.getItem('slide_img_2') || localStorage.getItem('edit_slide_img_2') || '';
+            var slideImg3 = localStorage.getItem('slide_img_3') || localStorage.getItem('edit_slide_img_3') || '';
+            var adImg = localStorage.getItem('ad_img') || '';
+
             var localStorageInit = '\n\n// 站点配置（由管理面板自动生成）\n' +
                 'const siteConfig = {\n' +
                 '    site_name: \'' + (edits['edit_site_name'] || '商品目录').replace(/'/g, "\\'") + '\',\n' +
@@ -1323,19 +1336,19 @@ localStorage.setItem('ad_img', adConfig.ad_img);
                 '    slide_1_title: \'' + (edits['edit_slide_1_title'] || '标题').replace(/'/g, "\\'") + '\',\n' +
                 '    slide_1_author: \'' + (edits['edit_slide_1_author'] || '作者').replace(/'/g, "\\'") + '\',\n' +
                 '    slide_1_date: \'' + (edits['edit_slide_1_date'] || '日期').replace(/'/g, "\\'") + '\',\n' +
-                '    slide_img_1: \'' + (edits['edit_slide_img_1'] || '').replace(/'/g, "\\'") + '\',\n' +
+                '    slide_img_1: \'' + slideImg1.replace(/'/g, "\\'") + '\',\n' +
                 '    slide_2_title: \'' + (edits['edit_slide_2_title'] || '标题').replace(/'/g, "\\'") + '\',\n' +
                 '    slide_2_author: \'' + (edits['edit_slide_2_author'] || '作者').replace(/'/g, "\\'") + '\',\n' +
                 '    slide_2_date: \'' + (edits['edit_slide_2_date'] || '日期').replace(/'/g, "\\'") + '\',\n' +
-                '    slide_img_2: \'' + (edits['edit_slide_img_2'] || '').replace(/'/g, "\\'") + '\',\n' +
+                '    slide_img_2: \'' + slideImg2.replace(/'/g, "\\'") + '\',\n' +
                 '    slide_3_title: \'' + (edits['edit_slide_3_title'] || '标题').replace(/'/g, "\\'") + '\',\n' +
                 '    slide_3_author: \'' + (edits['edit_slide_3_author'] || '作者').replace(/'/g, "\\'") + '\',\n' +
                 '    slide_3_date: \'' + (edits['edit_slide_3_date'] || '日期').replace(/'/g, "\\'") + '\',\n' +
-                '    slide_img_3: \'' + (edits['edit_slide_img_3'] || '').replace(/'/g, "\\'") + '\'  \n' +
+                '    slide_img_3: \'' + slideImg3.replace(/'/g, "\\'") + '\'  \n' +
                 '};\n\n' +
                 '// 广告配置\n' +
                 'const adConfig = {\n' +
-                '    ad_img: \'' + (edits['edit_ad_img'] || '').replace(/'/g, "\\'") + '\'\n' +
+                '    ad_img: \'' + adImg.replace(/'/g, "\\'") + '\'\n' +
                 '};\n\n' +
                 '// 将配置写入 localStorage\n' +
                 'localStorage.setItem(\'edit_site_name\', siteConfig.site_name);\n' +
