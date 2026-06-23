@@ -1279,6 +1279,13 @@ localStorage.setItem('ad_img', adConfig.ad_img);
             };
         });
 
+        // 收集 localStorage 中的所有编辑数据（轮播图、站点信息等）
+        var edits = {};
+        for (var i = 0; i < localStorage.length; i++) {
+            var key = localStorage.key(i);
+            edits[key] = localStorage.getItem(key);
+        }
+
         // 先获取原始 script.js，只替换 productsData 数组，保留渲染逻辑
         fetch('https://api.github.com/repos/zhangfugui1994/zfg_boke/contents/script.js', {
             headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github.v3+json' }
@@ -1297,6 +1304,65 @@ localStorage.setItem('ad_img', adConfig.ad_img);
 
             var newDataBlock = 'const productsData = ' + JSON.stringify(articles, null, 2) + ';\n';
             var newContent = originalContent.substring(0, dataStart) + newDataBlock + originalContent.substring(dataEnd);
+
+            // 在 let posts = 后面追加 localStorage 初始化代码
+            var localStorageInit = '\n\n// 站点配置（由管理面板自动生成）\n' +
+                'const siteConfig = {\n' +
+                '    site_name: \'' + (edits['edit_site_name'] || '商品目录').replace(/'/g, "\\'") + '\',\n' +
+                '    footer_name: \'' + (edits['edit_footer_name'] || 'MySite').replace(/'/g, "\\'") + '\',\n' +
+                '    footer_info: \'' + (edits['edit_footer_info'] || '').replace(/'/g, "\\'") + '\'\n' +
+                '};\n\n' +
+                '// 导航配置\n' +
+                'const navConfig = {\n' +
+                '    nav_1: \'' + (edits['edit_nav_1'] || '主页').replace(/'/g, "\\'") + '\',\n' +
+                '    nav_2: \'' + (edits['edit_nav_2'] || '防丢找回').replace(/'/g, "\\'") + '\',\n' +
+                '    nav_3: \'' + (edits['edit_nav_3'] || '积分领取').replace(/'/g, "\\'") + '\'\n' +
+                '};\n\n' +
+                '// 轮播图配置\n' +
+                'const slideConfig = {\n' +
+                '    slide_1_title: \'' + (edits['edit_slide_1_title'] || '标题').replace(/'/g, "\\'") + '\',\n' +
+                '    slide_1_author: \'' + (edits['edit_slide_1_author'] || '作者').replace(/'/g, "\\'") + '\',\n' +
+                '    slide_1_date: \'' + (edits['edit_slide_1_date'] || '日期').replace(/'/g, "\\'") + '\',\n' +
+                '    slide_img_1: \'' + (edits['edit_slide_img_1'] || '').replace(/'/g, "\\'") + '\',\n' +
+                '    slide_2_title: \'' + (edits['edit_slide_2_title'] || '标题').replace(/'/g, "\\'") + '\',\n' +
+                '    slide_2_author: \'' + (edits['edit_slide_2_author'] || '作者').replace(/'/g, "\\'") + '\',\n' +
+                '    slide_2_date: \'' + (edits['edit_slide_2_date'] || '日期').replace(/'/g, "\\'") + '\',\n' +
+                '    slide_img_2: \'' + (edits['edit_slide_img_2'] || '').replace(/'/g, "\\'") + '\',\n' +
+                '    slide_3_title: \'' + (edits['edit_slide_3_title'] || '标题').replace(/'/g, "\\'") + '\',\n' +
+                '    slide_3_author: \'' + (edits['edit_slide_3_author'] || '作者').replace(/'/g, "\\'") + '\',\n' +
+                '    slide_3_date: \'' + (edits['edit_slide_3_date'] || '日期').replace(/'/g, "\\'") + '\',\n' +
+                '    slide_img_3: \'' + (edits['edit_slide_img_3'] || '').replace(/'/g, "\\'") + '\'  \n' +
+                '};\n\n' +
+                '// 广告配置\n' +
+                'const adConfig = {\n' +
+                '    ad_img: \'' + (edits['edit_ad_img'] || '').replace(/'/g, "\\'") + '\'\n' +
+                '};\n\n' +
+                '// 将配置写入 localStorage\n' +
+                'localStorage.setItem(\'edit_site_name\', siteConfig.site_name);\n' +
+                'localStorage.setItem(\'edit_footer_name\', siteConfig.footer_name);\n' +
+                'localStorage.setItem(\'edit_footer_info\', siteConfig.footer_info);\n' +
+                'localStorage.setItem(\'edit_nav_1\', navConfig.nav_1);\n' +
+                'localStorage.setItem(\'edit_nav_2\', navConfig.nav_2);\n' +
+                'localStorage.setItem(\'edit_nav_3\', navConfig.nav_3);\n' +
+                'localStorage.setItem(\'edit_slide_1_title\', slideConfig.slide_1_title);\n' +
+                'localStorage.setItem(\'edit_slide_1_author\', slideConfig.slide_1_author);\n' +
+                'localStorage.setItem(\'edit_slide_1_date\', slideConfig.slide_1_date);\n' +
+                'localStorage.setItem(\'edit_slide_img_1\', slideConfig.slide_img_1);\n' +
+                'localStorage.setItem(\'edit_slide_2_title\', slideConfig.slide_2_title);\n' +
+                'localStorage.setItem(\'edit_slide_2_author\', slideConfig.slide_2_author);\n' +
+                'localStorage.setItem(\'edit_slide_2_date\', slideConfig.slide_2_date);\n' +
+                'localStorage.setItem(\'edit_slide_img_2\', slideConfig.slide_img_2);\n' +
+                'localStorage.setItem(\'edit_slide_3_title\', slideConfig.slide_3_title);\n' +
+                'localStorage.setItem(\'edit_slide_3_author\', slideConfig.slide_3_author);\n' +
+                'localStorage.setItem(\'edit_slide_3_date\', slideConfig.slide_3_date);\n' +
+                'localStorage.setItem(\'edit_slide_img_3\', slideConfig.slide_img_3);\n' +
+                'localStorage.setItem(\'edit_ad_img\', adConfig.ad_img);\n' +
+                'localStorage.setItem(\'slide_img_1\', slideConfig.slide_img_1);\n' +
+                'localStorage.setItem(\'slide_img_2\', slideConfig.slide_img_2);\n' +
+                'localStorage.setItem(\'slide_img_3\', slideConfig.slide_img_3);\n' +
+                'localStorage.setItem(\'ad_img\', adConfig.ad_img);\n';
+
+            newContent = newContent.replace('let posts = ', localStorageInit + 'let posts = ');
 
             // 创建/更新文件
             return fetch('https://api.github.com/repos/zhangfugui1994/zfg_boke/contents/script.js', {
