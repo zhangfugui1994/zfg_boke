@@ -28,47 +28,10 @@
                         <input type="text" placeholder="搜索..." data-editable="search_placeholder">
                         <button><i class="ri-search-line"></i></button>
                     </div>
-                    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
-                        <span></span><span></span><span></span>
-                    </button>
                 </div>
             </div>
         </div>
     </header>
-
-    <!-- 移动端菜单 -->
-    <div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="toggleMobileMenu()"></div>
-    <aside class="mobile-menu" id="mobileMenu">
-        <div class="mobile-menu-header">
-            <span class="logo-text" data-editable="site_name">商品目录</span>
-            <button class="close-menu" onclick="toggleMobileMenu()">&times;</button>
-        </div>
-        <nav class="mobile-nav">
-            <ul>
-                <li><a href="#"><i class="ri-parent-line"></i><span data-editable="mob_nav_1">萌新入坑</span></a></li>
-                <li class="has-submenu">
-                    <a href="#" onclick="toggleSubmenu(event, this)">资源列表 <i class="ri-arrow-down-s-line"></i></a>
-                    <ul class="submenu">
-                        <li><a href="#"><i class="ri-chat-heart-line"></i><span data-editable="sub_1">网红自拍</span></a></li>
-                        <li><a href="#"><i class="ri-heart-pulse-line"></i><span data-editable="sub_2">软妹萝莉</span></a></li>
-                        <li><a href="#"><i class="ri-hearts-line"></i><span data-editable="sub_3">反差女神</span></a></li>
-                        <li><a href="#"><i class="ri-folder-add-line"></i><span data-editable="sub_4">网红合集</span></a></li>
-                    </ul>
-                </li>
-                <li class="has-submenu">
-                    <a href="#" onclick="toggleSubmenu(event, this)">站点帮助 <i class="ri-arrow-down-s-line"></i></a>
-                    <ul class="submenu">
-                        <li><a href="#"><span data-editable="help_1">Pikpak网盘</span></a></li>
-                        <li><a href="#"><span data-editable="help_2">限制条款</span></a></li>
-                        <li><a href="#"><span data-editable="help_3">投稿指南</span></a></li>
-                        <li><a href="#"><span data-editable="help_4">客服留言</span></a></li>
-                    </ul>
-                </li>
-                <li><a href="#"><i class="ri-vip-line"></i><span data-editable="mob_nav_2">充值&会员</span></a></li>
-                <li><a href="#"><i class="ri-font-size-2"></i><span data-editable="mob_nav_3">实用工具</span></a></li>
-            </ul>
-        </nav>
-    </aside>
 
     <!-- 主内容区 -->
     <main class="site-content">
@@ -160,26 +123,11 @@
         </div>
     </footer>
 
-    <!-- 移动端底部导航 -->
+    <!-- 移动端底部导航（仅保留首页） -->
     <nav class="mobile-footer">
         <a href="#" class="mobile-nav-item active">
             <i class="ri-home-heart-line"></i>
-            <span data-editable="mfoot_1">首页</span>
-        </a>
-        <a href="#" class="mobile-nav-item">
-            <i class="ri-bookmark-3-line"></i>
-            <span data-editable="mfoot_2">资源</span>
-        </a>
-        <a href="#" class="mobile-nav-item publish-btn">
-            <i class="ri-add-line"></i>
-        </a>
-        <a href="#" class="mobile-nav-item">
-            <i class="ri-search-line"></i>
-            <span data-editable="mfoot_3">搜索</span>
-        </a>
-        <a href="#" class="mobile-nav-item">
-            <i class="ri-user-heart-line"></i>
-            <span data-editable="mfoot_4">我的</span>
+            <span>首页</span>
         </a>
     </nav>
 

@@ -148,91 +148,7 @@ img { max-width: 100%; display: block; }
     border-radius: 16px;
 }
 
-.mobile-menu-btn {
-    display: none;
-    flex-direction: column;
-    gap: 4px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-}
-
-.mobile-menu-btn span {
-    display: block;
-    width: 20px;
-    height: 2px;
-    background: var(--text);
-}
-
-/* ========== 移动端菜单 ========== */
-.mobile-menu-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 998;
-}
-
 .mobile-menu-overlay.active { display: block; }
-
-.mobile-menu {
-    position: fixed;
-    top: 0;
-    left: -280px;
-    width: 280px;
-    height: 100vh;
-    background: var(--white);
-    z-index: 999;
-    transition: left 0.3s ease;
-    overflow-y: auto;
-}
-
-.mobile-menu.active { left: 0; }
-
-.mobile-menu-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px;
-    border-bottom: 1px solid var(--border);
-}
-
-.close-menu {
-    background: none;
-    border: none;
-    font-size: 28px;
-    cursor: pointer;
-    color: var(--text-light);
-}
-
-.mobile-nav ul { padding: 8px 0; }
-
-.mobile-nav li a {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 20px;
-    font-size: 15px;
-    color: var(--text);
-    transition: var(--transition);
-}
-
-.mobile-nav li a:hover {
-    background: var(--bg);
-    color: var(--primary);
-}
-
-.mobile-nav .has-submenu > a::after { content: ''; margin-left: auto; margin-right: 16px; }
-
-.mobile-nav .submenu {
-    display: none;
-    background: var(--bg);
-}
-
-.mobile-nav .has-submenu.open .submenu { display: block; }
-
-.mobile-nav .submenu a { padding-left: 48px; font-size: 14px; }
 
 /* ========== 主内容区 ========== */
 .site-content { padding: 20px 0 80px; }
@@ -536,22 +452,6 @@ img { max-width: 100%; display: block; }
 
 .mobile-footer .mobile-nav-item i { font-size: 20px; }
 
-.mobile-footer .mobile-nav-item.active,
-.mobile-footer .mobile-nav-item:hover { color: var(--primary); }
-
-.mobile-footer .publish-btn {
-    background: var(--primary);
-    color: var(--white) !important;
-    border-radius: 50%;
-    width: 44px;
-    height: 44px;
-    margin: -20px auto 0;
-    padding: 0;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 2px 8px rgba(74,144,217,0.4);
-}
-
 /* ========== 编辑面板 ========== */
 .edit-overlay {
     display: none;
@@ -739,14 +639,16 @@ img { max-width: 100%; display: block; }
 
 @media (max-width: 768px) {
     .main-nav { display: none; }
-    .mobile-menu-btn { display: flex; }
-    .search-box { display: none; }
+    .search-box { display: flex; }
+    .search-box input { width: 80px; }
     .auth-buttons .btn-outline { display: none; }
     .posts-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .mobile-footer { display: flex; }
     .site-footer { margin-bottom: 60px; }
     .slider-main { aspect-ratio: 16/9; }
     .edit-panel { width: 100%; }
+    .logo-text { font-size: 18px; }
+    .header-left { gap: 12px; }
 }
 
 @media (max-width: 480px) {
