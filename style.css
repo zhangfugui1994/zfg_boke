@@ -639,16 +639,17 @@ img { max-width: 100%; display: block; }
 
 @media (max-width: 768px) {
     .main-nav { display: none; }
-    .search-box { display: flex; }
-    .search-box input { width: 80px; }
+    .search-box { display: flex; flex: 1; max-width: 200px; }
+    .search-box input { width: 100%; }
     .auth-buttons .btn-outline { display: none; }
     .posts-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .mobile-footer { display: flex; }
     .site-footer { margin-bottom: 60px; }
     .slider-main { aspect-ratio: 16/9; }
     .edit-panel { width: 100%; }
-    .logo-text { font-size: 18px; }
-    .header-left { gap: 12px; }
+    .logo-text { font-size: 16px; }
+    .header-left { gap: 8px; }
+    .header-right { display: flex; align-items: center; }
 }
 
 @media (max-width: 480px) {
