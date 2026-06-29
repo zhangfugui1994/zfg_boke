@@ -598,11 +598,14 @@
             <!-- 文章管理 -->
             <div class="form-card" id="sec-posts">
                 <h3><i class="ri-file-list-line"></i> 文章管理</h3>
-                <div style="margin-bottom: 16px; display: flex; gap: 8px;">
+                <div style="margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
                     <button class="add-post-btn" onclick="addPost()" style="width: auto; padding: 8px 16px; border: none;"><i class="ri-add-line"></i> 添加新文章</button>
                     <button class="add-post-btn" onclick="openBatchUpload()" style="width: auto; padding: 8px 16px; border: none;"><i class="ri-upload-cloud-2-line"></i> 批量上传 .md</button>
+                    <button class="add-post-btn" onclick="connectGithub()" style="width: auto; padding: 8px 16px; border: none; background: #28a745;"><i class="ri-github-fill"></i> 连接GitHub</button>
+                    <button class="add-post-btn" onclick="pullFromGitHub()" style="width: auto; padding: 8px 16px; border: none; background: #17a2b8;"><i class="ri-download-cloud-2-line"></i> 拉取数据</button>
                 </div>
                 <div id="postsEditList"></div>
+                <div id="paginationControls" style="display:none; margin-top: 16px; text-align: center;"></div>
             </div>
 
             <!-- 底部信息 -->
@@ -702,6 +705,12 @@
         .then(function(fileData) {
             var content = decodeURIComponent(escape(atob(fileData.content)));
             var data = JSON.parse(content);
+            // 根据 filename 自动设置 order
+            data.forEach(function(p) {
+                var fn = p.filename || '';
+                var m = fn.match(/^(\d+)/);
+                p.order = m ? parseInt(m[1]) : (p.order || 9999);
+            });
             posts = JSON.parse(JSON.stringify(data));
             savePostsToStorage();
             return true;
@@ -712,11 +721,17 @@
         });
     }
 
-    // ===== 渲染文章编辑列表（按 order 排序显示） =====
+    // ===== 分页变量 =====
+    var currentPage = 1;
+    var pageSize = 20;
+
+    // ===== 渲染文章编辑列表（分页） =====
     function renderPostsEditList() {
         const container = document.getElementById('postsEditList');
+        const pagerContainer = document.getElementById('paginationControls');
         if (!posts || posts.length === 0) {
             container.innerHTML = '<p style="color:#999;font-size:13px;">暂无文章</p>';
+            pagerContainer.style.display = 'none';
             return;
         }
 
@@ -724,7 +739,15 @@
         const indexedPosts = posts.map((p, i) => ({ ...p, _origIndex: i }))
             .sort((a, b) => (a.order || 9999) - (b.order || 9999));
 
-        container.innerHTML = indexedPosts.map((p) => `
+        var totalPages = Math.ceil(indexedPosts.length / pageSize);
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        var start = (currentPage - 1) * pageSize;
+        var end = start + pageSize;
+        var pagePosts = indexedPosts.slice(start, end);
+
+        container.innerHTML = pagePosts.map((p) => `
             <div class="post-item">
                 <div class="post-item-header">
                     <span class="post-name">${escapeHtml(p.name || '文章 ' + (p._origIndex+1))}</span>
@@ -754,6 +777,34 @@
                 </div>
             </div>
         `).join('');
+
+        // 渲染分页控件
+        if (totalPages > 1) {
+            var html = '<div style="display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:12px;">';
+            html += '<button onclick="goPage(1)"' + (currentPage===1?' disabled style="opacity:.4"':'') + '>首页</button>';
+            html += '<button onclick="goPage(' + (currentPage-1) + ')"' + (currentPage<=1?' disabled style="opacity:.4"':'') + '>上一页</button>';
+            // 显示当前页附近页码
+            var pStart = Math.max(1, currentPage - 2);
+            var pEnd = Math.min(totalPages, currentPage + 2);
+            if (pStart > 1) html += '<span style="color:#999">...</span>';
+            for (var p = pStart; p <= pEnd; p++) {
+                html += '<button onclick="goPage(' + p + ')"' + (p===currentPage?' style="background:#4A90D9;color:#fff"':'') + '>' + p + '</button>';
+            }
+            if (pEnd < totalPages) html += '<span style="color:#999">...</span>';
+            html += '<button onclick="goPage(' + (currentPage+1) + ')"' + (currentPage>=totalPages?' disabled style="opacity:.4"':'') + '>下一页</button>';
+            html += '<button onclick="goPage(' + totalPages + ')"' + (currentPage>=totalPages?' disabled style="opacity:.4"':'') + '>末页</button>';
+            html += '<span style="color:#999;margin-left:8px;">共' + indexedPosts.length + '篇</span>';
+            html += '</div>';
+            pagerContainer.innerHTML = html;
+            pagerContainer.style.display = 'block';
+        } else {
+            pagerContainer.style.display = 'none';
+        }
+    }
+
+    function goPage(page) {
+        currentPage = page;
+        renderPostsEditList();
     }
 
     function updatePost(index, field, value) {
@@ -777,6 +828,7 @@
             share_link: "#",
             size: "",
             name: "新文章",
+            filename: "",
             order: 9999
         });
         savePostsToStorage();
@@ -971,6 +1023,7 @@
                         cover_image: '',
                         share_link: item.shareLink || '#',
                         name: item.title || '新文章',
+                        filename: batchParsedItems[i].filename || '',
                         updated: new Date().toISOString(),
                         order: batchParsedItems[i].order
                     });
@@ -1346,6 +1399,7 @@ localStorage.setItem('ad_img', adConfig.ad_img);
                 cover_image: p.cover_image || '',
                 share_link: p.share_link || '',
                 name: p.name || '',
+                filename: p.filename || '',
                 updated: p.updated || new Date().toISOString(),
                 order: p.order || 9999
             };
@@ -1499,6 +1553,65 @@ localStorage.setItem('ad_img', adConfig.ad_img);
         });
     }
 
+    // ===== 连接 GitHub（输入 Token） =====
+    function connectGithub() {
+        var existingToken = localStorage.getItem('github_token');
+        var overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center';
+        var box = document.createElement('div');
+        box.style.cssText = 'background:#fff;border-radius:12px;padding:24px;width:400px;max-width:90vw';
+        box.innerHTML = '<h3 style="margin:0 0 12px;font-size:16px">GitHub Token</h3>' +
+            '<p style="font-size:12px;color:#999;margin:0 0 12px">' + (existingToken ? '当前已连接，可更换 Token。' : '首次使用需要输入 Token。') + '</p>' +
+            '<input type="text" id="gh_token_input" placeholder="ghp_..." value="' + (existingToken || '') + '" style="width:100%;padding:8px;border:1px solid #e8e8e8;border-radius:6px;font-size:14px;box-sizing:border-box">' +
+            '<div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">' +
+            '<button id="gh_cancel" style="padding:6px 16px;border:1px solid #e8e8e8;border-radius:6px;cursor:pointer">取消</button>' +
+            '<button id="gh_confirm" style="padding:6px 16px;background:#4A90D9;color:#fff;border:none;border-radius:6px;cursor:pointer">确认</button>' +
+            '</div>';
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+
+        document.getElementById('gh_cancel').onclick = function() { document.body.removeChild(overlay); };
+        document.getElementById('gh_confirm').onclick = function() {
+            var t = document.getElementById('gh_token_input').value.trim();
+            if (t) {
+                localStorage.setItem('github_token', t);
+                alert('Token 已保存！点击"拉取数据"可从 GitHub 同步文章。');
+            } else {
+                localStorage.removeItem('github_token');
+                alert('已清除 Token。');
+            }
+            document.body.removeChild(overlay);
+        };
+        document.getElementById('gh_token_input').focus();
+    }
+
+    // ===== 从 GitHub 拉取数据 =====
+    function pullFromGitHub() {
+        var token = localStorage.getItem('github_token');
+        if (!token) {
+            alert('请先点击"连接GitHub"输入 Token。');
+            return;
+        }
+        var btn = event.target.closest('button');
+        var origText = btn.innerHTML;
+        btn.innerHTML = '<i class="ri-loader-4-line"></i> 拉取中...';
+        btn.disabled = true;
+
+        loadPostsFromGitHub(token).then(function(success) {
+            if (success) {
+                alert('拉取成功！共 ' + posts.length + ' 篇文章。');
+                renderPostsEditList();
+            } else {
+                alert('拉取失败。请检查 Token 是否正确，或 posts.json 是否存在。');
+            }
+        }).catch(function(err) {
+            alert('拉取出错：' + err.message);
+        }).finally(function() {
+            btn.innerHTML = origText;
+            btn.disabled = false;
+        });
+    }
+
     // ===== 侧边栏导航高亮 =====
     function initSidebarNav() {
         const links = document.querySelectorAll('.sidebar-nav a');
@@ -1532,26 +1645,25 @@ localStorage.setItem('ad_img', adConfig.ad_img);
 
     // ===== 初始化 =====
     function initAdmin() {
-        // 优先从 localStorage 恢复文章数据
-        if (!loadPostsFromStorage()) {
-            // localStorage 没有数据，尝试从 GitHub 拉取
-            var githubToken = localStorage.getItem('github_token');
-            if (githubToken) {
-                loadPostsFromGitHub(githubToken).then(function(success) {
-                    if (success) {
-                        renderPostsEditList();
-                    } else {
-                        // 拉取失败，用默认数据
+        var githubToken = localStorage.getItem('github_token');
+        // 如果有 Token，优先从 GitHub 拉取
+        if (githubToken) {
+            loadPostsFromGitHub(githubToken).then(function(success) {
+                if (success) {
+                    renderPostsEditList();
+                } else {
+                    // 拉取失败，回退到 localStorage
+                    if (!loadPostsFromStorage()) {
                         posts = JSON.parse(JSON.stringify(productsData));
-                        renderPostsEditList();
                     }
-                });
-            } else {
-                // 没有 token，用默认数据
-                posts = JSON.parse(JSON.stringify(productsData));
-                renderPostsEditList();
-            }
+                    renderPostsEditList();
+                }
+            });
         } else {
+            // 没有 Token，从 localStorage 恢复
+            if (!loadPostsFromStorage()) {
+                posts = JSON.parse(JSON.stringify(productsData));
+            }
             renderPostsEditList();
         }
         loadSavedEdits();
