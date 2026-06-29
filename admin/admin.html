@@ -705,6 +705,16 @@
         .then(function(fileData) {
             var content = decodeURIComponent(escape(atob(fileData.content)));
             var data = JSON.parse(content);
+            var seen = new Set();
+            var deduped = [];
+            data.forEach(function(p) {
+                var key = p.share_link || p.title || p.name;
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    deduped.push(p);
+                }
+            });
+            data = deduped;
             // 根据 filename 自动设置 order
             data.forEach(function(p) {
                 var fn = p.filename || '';
@@ -747,10 +757,10 @@
         var end = start + pageSize;
         var pagePosts = indexedPosts.slice(start, end);
 
-        container.innerHTML = pagePosts.map((p) => `
+        container.innerHTML = pagePosts.map((p, idx) => `
             <div class="post-item">
                 <div class="post-item-header">
-                    <span class="post-name">${escapeHtml(p.name || '文章 ' + (p._origIndex+1))}</span>
+                    <span class="post-name"><strong>${idx + 1}.</strong> ${escapeHtml(p.name || '文章 ' + (p._origIndex+1))}</span>
                     <button onclick="removePost(${p._origIndex})"><i class="ri-delete-bin-line"></i> 删除</button>
                 </div>
                 <div class="form-row">
@@ -1418,104 +1428,48 @@ localStorage.setItem('ad_img', adConfig.ad_img);
 
                 // 找到 productsData 数组的范围并替换
                 var dataStart = originalContent.indexOf('const productsData = ');
-                var dataEnd = originalContent.indexOf('\nlet posts =');
+                // 找数组结束符 ];
+                var dataEnd = originalContent.indexOf('];', dataStart + 20);
                 if (dataStart === -1 || dataEnd === -1) {
                     throw new Error('无法定位 productsData 数组位置');
                 }
+                dataEnd += 2; // 包含 ];
 
                 var newDataBlock = 'const productsData = ' + JSON.stringify(articles, null, 2) + ';\n';
                 var newContent = originalContent.substring(0, dataStart) + newDataBlock + originalContent.substring(dataEnd);
 
-                // 在 let posts = 后面追加 localStorage 初始化代码
-                // 注意：图片 URL 在 saveAll() 中存储为 'slide_img_N'，但 edits 只包含 localStorage 当前值
-                // 所以需要单独从 localStorage 读取图片 URL
-                var slideImg1 = localStorage.getItem('slide_img_1') || localStorage.getItem('edit_slide_img_1') || '';
-                var slideImg2 = localStorage.getItem('slide_img_2') || localStorage.getItem('edit_slide_img_2') || '';
-                var slideImg3 = localStorage.getItem('slide_img_3') || localStorage.getItem('edit_slide_img_3') || '';
-                var adImg = localStorage.getItem('ad_img') || '';
-
-                var localStorageInit = '\n\n// 站点配置（由管理面板自动生成）\n' +
-                    'const siteConfig = {\n' +
-                    '    site_name: \'' + (edits['edit_site_name'] || '商品目录').replace(/'/g, "\\'") + '\',\n' +
-                    '    footer_name: \'' + (edits['edit_footer_name'] || 'MySite').replace(/'/g, "\\'") + '\',\n' +
-                    '    footer_info: \'' + (edits['edit_footer_info'] || '').replace(/'/g, "\\'") + '\'\n' +
-                    '};\n\n' +
-                    '// 导航配置\n' +
-                    'const navConfig = {\n' +
-                    '    nav_1: \'' + (edits['edit_nav_1'] || '主页').replace(/'/g, "\\'") + '\',\n' +
-                    '    nav_2: \'' + (edits['edit_nav_2'] || '防丢找回').replace(/'/g, "\\'") + '\',\n' +
-                    '};\n\n' +
-                    '// 轮播图配置\n' +
-                    'const slideConfig = {\n' +
-                    '    slide_1_title: \'' + (edits['edit_slide_1_title'] || '标题').replace(/'/g, "\\'") + '\',\n' +
-                    '    slide_1_author: \'' + (edits['edit_slide_1_author'] || '作者').replace(/'/g, "\\'") + '\',\n' +
-                    '    slide_1_date: \'' + (edits['edit_slide_1_date'] || '日期').replace(/'/g, "\\'") + '\',\n' +
-                    '    slide_img_1: \'' + slideImg1.replace(/'/g, "\\'") + '\',\n' +
-                    '    slide_2_title: \'' + (edits['edit_slide_2_title'] || '标题').replace(/'/g, "\\'") + '\',\n' +
-                    '    slide_2_author: \'' + (edits['edit_slide_2_author'] || '作者').replace(/'/g, "\\'") + '\',\n' +
-                    '    slide_2_date: \'' + (edits['edit_slide_2_date'] || '日期').replace(/'/g, "\\'") + '\',\n' +
-                    '    slide_img_2: \'' + slideImg2.replace(/'/g, "\\'") + '\',\n' +
-                    '    slide_3_title: \'' + (edits['edit_slide_3_title'] || '标题').replace(/'/g, "\\'") + '\',\n' +
-                    '    slide_3_author: \'' + (edits['edit_slide_3_author'] || '作者').replace(/'/g, "\\'") + '\',\n' +
-                    '    slide_3_date: \'' + (edits['edit_slide_3_date'] || '日期').replace(/'/g, "\\'") + '\',\n' +
-                    '    slide_img_3: \'' + slideImg3.replace(/'/g, "\\'") + '\'  \n' +
-                    '};\n\n' +
-                    '// 广告配置\n' +
-                    'const adConfig = {\n' +
-                    '    ad_img: \'' + adImg.replace(/'/g, "\\'") + '\'\n' +
-                    '};\n\n' +
-                    '// 将配置写入 localStorage\n' +
-                    'localStorage.setItem(\'edit_site_name\', siteConfig.site_name);\n' +
-                    'localStorage.setItem(\'edit_footer_name\', siteConfig.footer_name);\n' +
-                    'localStorage.setItem(\'edit_footer_info\', siteConfig.footer_info);\n' +
-                    'localStorage.setItem(\'edit_nav_1\', navConfig.nav_1);\n' +
-                    'localStorage.setItem(\'edit_nav_2\', navConfig.nav_2);\n' +
-                    'localStorage.setItem(\'edit_slide_1_title\', slideConfig.slide_1_title);\n' +
-                    'localStorage.setItem(\'edit_slide_1_author\', slideConfig.slide_1_author);\n' +
-                    'localStorage.setItem(\'edit_slide_1_date\', slideConfig.slide_1_date);\n' +
-                    'localStorage.setItem(\'edit_slide_img_1\', slideConfig.slide_img_1);\n' +
-                    'localStorage.setItem(\'edit_slide_2_title\', slideConfig.slide_2_title);\n' +
-                    'localStorage.setItem(\'edit_slide_2_author\', slideConfig.slide_2_author);\n' +
-                    'localStorage.setItem(\'edit_slide_2_date\', slideConfig.slide_2_date);\n' +
-                    'localStorage.setItem(\'edit_slide_img_2\', slideConfig.slide_img_2);\n' +
-                    'localStorage.setItem(\'edit_slide_3_title\', slideConfig.slide_3_title);\n' +
-                    'localStorage.setItem(\'edit_slide_3_author\', slideConfig.slide_3_author);\n' +
-                    'localStorage.setItem(\'edit_slide_3_date\', slideConfig.slide_3_date);\n' +
-                    'localStorage.setItem(\'edit_slide_img_3\', slideConfig.slide_img_3);\n' +
-                    'localStorage.setItem(\'edit_ad_img\', adConfig.ad_img);\n' +
-                    'localStorage.setItem(\'slide_img_1\', slideConfig.slide_img_1);\n' +
-                    'localStorage.setItem(\'slide_img_2\', slideConfig.slide_img_2);\n' +
-                    'localStorage.setItem(\'slide_img_3\', slideConfig.slide_img_3);\n' +
-                    'localStorage.setItem(\'ad_img\', adConfig.ad_img);\n';
-
-                newContent = newContent.replace('let posts = ', localStorageInit + 'let posts = ');
-
-                // 创建/更新文件
+                // 推送前先重新获取 SHA（避免并发冲突）
                 return fetch('https://api.github.com/repos/zhangfugui1994/zfg_boke/contents/script.js', {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': 'Bearer ' + token,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: 'update: 从管理面板推送',
-                        content: btoa(unescape(encodeURIComponent(newContent))),
-                        sha: sha
-                    })
+                    headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github.v3+json' }
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(currentFileData) {
+                    return fetch('https://api.github.com/repos/zhangfugui1994/zfg_boke/contents/script.js', {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': 'Bearer ' + token,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message: 'update: 从管理面板推送',
+                            content: btoa(unescape(encodeURIComponent(newContent))),
+                            sha: currentFileData.sha
+                        })
+                    });
                 });
             })
             .then(function(res) { return res.json(); });
         })();
 
         var postsPromise = (function() {
-            // 先获取 posts.json 的 SHA（如果存在）
+            // 推送前先重新获取 SHA（避免并发冲突）
             return fetch('https://api.github.com/repos/zhangfugui1994/zfg_boke/contents/posts.json', {
                 headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github.v3+json' }
             })
             .then(function(r) { return r.json(); })
-            .then(function(fileData) {
-                var sha = fileData.sha || null;
+            .then(function(currentFileData) {
+                console.log('posts.json current sha:', currentFileData.sha);
                 return fetch('https://api.github.com/repos/zhangfugui1994/zfg_boke/contents/posts.json', {
                     method: 'PUT',
                     headers: {
@@ -1526,25 +1480,47 @@ localStorage.setItem('ad_img', adConfig.ad_img);
                     body: JSON.stringify({
                         message: 'update: 从管理面板推送 posts',
                         content: btoa(unescape(encodeURIComponent(postsJson))),
-                        sha: sha
+                        sha: currentFileData.sha
                     })
                 });
             })
-            .then(function(res) { return res.json(); });
+            .then(function(res) {
+                console.log('posts.json PUT status:', res.status);
+                return res.json();
+            });
         })();
 
-        // 等待两个请求都完成
-        Promise.all([scriptPromise, postsPromise])
-        .then(function(results) {
-            var scriptRes = results[0];
-            var postsRes = results[1];
-            if ((scriptRes.content || scriptRes.commit) && (postsRes.content || postsRes.commit)) {
+        // 先推送 script.js，再推送 posts.json（串行避免 SHA 冲突）
+        scriptPromise.then(function(scriptRes) {
+            console.log('script.js push result:', scriptRes);
+            if (scriptRes.message && scriptRes.message.indexOf('403') !== -1) {
+                return { error: 'script.js 推送失败: ' + scriptRes.message };
+            }
+            return postsPromise.then(function(postsRes) {
+                console.log('posts.json push result:', postsRes);
+                if (postsRes.message && postsRes.message.indexOf('403') !== -1) {
+                    return { error: 'posts.json 推送失败: ' + postsRes.message };
+                }
+                return {
+                    scriptOk: !!(scriptRes.content || scriptRes.commit),
+                    postsOk: !!(postsRes.content || postsRes.commit)
+                };
+            });
+        })
+        .then(function(result) {
+            console.log('final result:', result);
+            if (result.error) {
+                alert('推送出错：' + result.error + '\n\n请尝试：先点"拉取数据"同步，再编辑，然后推送。');
+                return;
+            }
+            if (result.scriptOk && result.postsOk) {
                 alert('推送成功！\nscript.js 和 posts.json 已更新。\nCloudflare Pages 将在 1-3 分钟内自动部署完成。');
             } else {
-                alert('部分推送失败：' + (scriptRes.message || postsRes.message || JSON.stringify(results)));
+                alert('部分推送失败。scriptOk:' + result.scriptOk + ' postsOk:' + result.postsOk);
             }
         })
         .catch(function(err) {
+            console.error('push error:', err);
             alert('推送出错：' + err.message);
         })
         .finally(function() {
