@@ -1105,14 +1105,17 @@ const slideConfig = {
     slide_1_author: 'CHULIAN',
     slide_1_date: '日期',
     slide_img_1: 'https://tuchuang-aac.pages.dev/api/cfile/AgACAgUAAyEGAATrbgq5AAICZGo6ie9dmfl86Y709Pji-WsjWTxEAAINEGsberXRVfo7ii7aTSiWAQADAgADdwADPAQ',
+    slide_1_url: '',
     slide_2_title: '推特网黄 汐梦瑶 大尺度私拍 骚浪小妖精按摩床下偷偷跪舔深喉偷吃肉棒 口爆满嘴浓精一脸满足！【全100.5G】',
     slide_2_author: 'CHULIAN',
     slide_2_date: '日期',
     slide_img_2: 'https://tuchuang-aac.pages.dev/cfile/AgACAgUAAyEGAATrbgq5AAICYmo6iZpHuuIUG3oKcPg2rYgJmtO4AAILEGsberXRVTGcrsH37rpmAQADAgADdwADPAQ',
+    slide_2_url: '',
     slide_3_title: '饼干姐姐 淫秽新作 调教绿奴老公 丝袜塞逼封精 口交足交凌辱肉棒 多体位交欢化身精液仓库！【全567.30G】',
     slide_3_author: 'CHULIAN',
     slide_3_date: '日期',
-    slide_img_3: 'https://tuchuang-aac.pages.dev/cfile/AgACAgUAAyEGAATrbgq5AAICYWo6iRE3FlGp3Z69TDggZh60CBcSAAIKEGsberXRVQ4N8xxZ9V6UAQADAgADdwADPAQ'  
+    slide_img_3: 'https://tuchuang-aac.pages.dev/cfile/AgACAgUAAyEGAATrbgq5AAICYWo6iRE3FlGp3Z69TDggZh60CBcSAAIKEGsberXRVQ4N8xxZ9V6UAQADAgADdwADPAQ',
+    slide_3_url: ''
 };
 
 // 广告配置
@@ -1138,10 +1141,16 @@ localStorage.setItem('edit_slide_3_title', slideConfig.slide_3_title);
 localStorage.setItem('edit_slide_3_author', slideConfig.slide_3_author);
 localStorage.setItem('edit_slide_3_date', slideConfig.slide_3_date);
 localStorage.setItem('edit_slide_img_3', slideConfig.slide_img_3);
+localStorage.setItem('edit_slide_1_url', slideConfig.slide_1_url);
+localStorage.setItem('edit_slide_2_url', slideConfig.slide_2_url);
+localStorage.setItem('edit_slide_3_url', slideConfig.slide_3_url);
 localStorage.setItem('edit_ad_img', adConfig.ad_img);
 localStorage.setItem('slide_img_1', slideConfig.slide_img_1);
 localStorage.setItem('slide_img_2', slideConfig.slide_img_2);
 localStorage.setItem('slide_img_3', slideConfig.slide_img_3);
+localStorage.setItem('slide_url_1', slideConfig.slide_1_url);
+localStorage.setItem('slide_url_2', slideConfig.slide_2_url);
+localStorage.setItem('slide_url_3', slideConfig.slide_3_url);
 localStorage.setItem('ad_img', adConfig.ad_img);
 let posts = JSON.parse(JSON.stringify(productsData));
 let filteredPosts = [...posts];
@@ -1502,6 +1511,12 @@ function loadSavedEdits() {
             const input = document.getElementById('edit_slide_img_' + i);
             if (input) input.value = saved;
         }
+        // 设置轮播图跳转链接
+        const linkEl = document.getElementById('slide_link_' + i);
+        if (linkEl) {
+            const savedUrl = localStorage.getItem('slide_url_' + i) || slideConfig['slide_' + i + '_url'];
+            linkEl.href = savedUrl || '#';
+        }
     }
 
     const savedAd = localStorage.getItem('ad_img');
@@ -1546,12 +1561,17 @@ function exportHTML() {
     scriptTags.forEach(s => {
         s.remove();
         const newScript = document.createElement('script');
+        var u1 = (localStorage.getItem('slide_url_1') || '').replace(/'/g, "\\'");
+        var u2 = (localStorage.getItem('slide_url_2') || '').replace(/'/g, "\\'");
+        var u3 = (localStorage.getItem('slide_url_3') || '').replace(/'/g, "\\'");
         newScript.textContent = `
             (function(){
                 var si=0,slides=document.querySelectorAll('.slide'),dots=document.querySelectorAll('.dot');
                 function update(){slides.forEach(function(s,i){s.classList.toggle('active',i===si)});dots.forEach(function(d,i){d.classList.toggle('active',i===si)})}
                 function next(){si=(si+1)%slides.length;update();setTimeout(next,4000)}
                 if(slides.length>0){update();setTimeout(next,4000)}
+                var urls=['${u1}','${u2}','${u3}'];
+                for(var i=1;i<=3;i++){var l=document.getElementById('slide_link_'+i);if(l&&urls[i-1]){l.href=urls[i-1]}}
             })();
         `;
         s.parentNode.appendChild(newScript);

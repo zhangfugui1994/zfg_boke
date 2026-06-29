@@ -533,6 +533,12 @@
                     </div>
                 </div>
                 <img class="img-preview" id="preview_slide_img_1" src="" alt="预览">
+                <div class="form-row single">
+                    <div class="form-group">
+                        <label>图1 跳转链接（留空则不跳转）</label>
+                        <input type="text" id="edit_slide_1_url" placeholder="例如: https://share.note.sx/xxx">
+                    </div>
+                </div>
 
                 <hr class="divider">
 
@@ -557,6 +563,12 @@
                     </div>
                 </div>
                 <img class="img-preview" id="preview_slide_img_2" src="" alt="预览">
+                <div class="form-row single">
+                    <div class="form-group">
+                        <label>图2 跳转链接（留空则不跳转）</label>
+                        <input type="text" id="edit_slide_2_url" placeholder="例如: https://share.note.sx/xxx">
+                    </div>
+                </div>
 
                 <hr class="divider">
 
@@ -581,6 +593,12 @@
                     </div>
                 </div>
                 <img class="img-preview" id="preview_slide_img_3" src="" alt="预览">
+                <div class="form-row single">
+                    <div class="form-group">
+                        <label>图3 跳转链接（留空则不跳转）</label>
+                        <input type="text" id="edit_slide_3_url" placeholder="例如: https://share.note.sx/xxx">
+                    </div>
+                </div>
             </div>
 
             <!-- 广告位 -->
@@ -1104,6 +1122,11 @@
             if (input && input.value.trim()) {
                 localStorage.setItem('slide_img_' + i, input.value.trim());
             }
+            // 保存跳转链接
+            const urlInput = document.getElementById('edit_slide_' + i + '_url');
+            if (urlInput && urlInput.value.trim()) {
+                localStorage.setItem('slide_url_' + i, urlInput.value.trim());
+            }
         }
 
         const adInput = document.getElementById('edit_ad_img');
@@ -1141,6 +1164,12 @@
                     const preview = document.getElementById('preview_slide_img_' + i);
                     if (preview) preview.src = saved;
                 }
+            }
+            // 加载跳转链接
+            const urlInput = document.getElementById('edit_slide_' + i + '_url');
+            if (urlInput) {
+                const savedUrl = localStorage.getItem('slide_url_' + i);
+                if (savedUrl) urlInput.value = savedUrl;
             }
         }
 
