@@ -1112,6 +1112,66 @@ const productsData = [
 
 
 
+
+// 站点配置（由管理面板自动生成）
+const siteConfig = {
+    site_name: '初恋の奇妙屋',
+    footer_name: 'CHULIAN',
+    footer_info: ''
+};
+
+// 导航配置
+const navConfig = {
+    nav_1: '主页',
+    nav_2: '防丢找回',
+};
+
+// 轮播图配置
+const slideConfig = {
+    slide_1_title: 'Npxvip全集 🔥🔥🔥 持续更新中 Onlyfans极品巨乳福利姬 namprikk_合集【全115.36G】',
+    slide_1_author: '初恋',
+    slide_1_date: '2026/6/29',
+    slide_img_1: 'https://tuchuang-aac.pages.dev/api/cfile/AgACAgUAAyEGAATrbgq5AAIC3GpCFHtHWgUx4veb3bNGGz-joLSwAAK4EWsbHuUQVtK95T-_4TLcAQADAgADeQADPAQ',
+    slide_2_title: '# 微博高颜值网红 张人o 大量大尺度自拍合集泄密 全裸自慰反差十足【全3.92G】',
+    slide_2_author: '初恋',
+    slide_2_date: '2026/6/29',
+    slide_img_2: 'https://tuchuang-aac.pages.dev/api/cfile/AgACAgUAAyEGAATrbgq5AAIC2GpCEjVtNj0hQYyu6k22KNMeiznEAAKjEWsbHuUQVglRCEzgpfdHAQADAgADeQADPAQ',
+    slide_3_title: '高人气微胖网黄 pupu噗噗 抖音主播被助手拍视频威胁 化身母狗胯下卖力侍奉阳具！【全106G】',
+    slide_3_author: '初恋',
+    slide_3_date: '2026/6/29',
+    slide_img_3: 'https://tuchuang-aac.pages.dev/cfile/AgACAgUAAyEGAATrbgq5AAICVGo6edXn25NWExm7JIdeeqDyiQ89AAKPD2sberXRVdOWbcxBoCrvAQADAgADdwADPAQ'  
+};
+
+// 广告配置
+const adConfig = {
+    ad_img: ''
+};
+
+// 将配置写入 localStorage
+localStorage.setItem('edit_site_name', siteConfig.site_name);
+localStorage.setItem('edit_footer_name', siteConfig.footer_name);
+localStorage.setItem('edit_footer_info', siteConfig.footer_info);
+localStorage.setItem('edit_nav_1', navConfig.nav_1);
+localStorage.setItem('edit_nav_2', navConfig.nav_2);
+localStorage.setItem('edit_slide_1_title', slideConfig.slide_1_title);
+localStorage.setItem('edit_slide_1_author', slideConfig.slide_1_author);
+localStorage.setItem('edit_slide_1_date', slideConfig.slide_1_date);
+localStorage.setItem('edit_slide_img_1', slideConfig.slide_img_1);
+localStorage.setItem('edit_slide_2_title', slideConfig.slide_2_title);
+localStorage.setItem('edit_slide_2_author', slideConfig.slide_2_author);
+localStorage.setItem('edit_slide_2_date', slideConfig.slide_2_date);
+localStorage.setItem('edit_slide_img_2', slideConfig.slide_img_2);
+localStorage.setItem('edit_slide_3_title', slideConfig.slide_3_title);
+localStorage.setItem('edit_slide_3_author', slideConfig.slide_3_author);
+localStorage.setItem('edit_slide_3_date', slideConfig.slide_3_date);
+localStorage.setItem('edit_slide_img_3', slideConfig.slide_img_3);
+localStorage.setItem('edit_ad_img', adConfig.ad_img);
+localStorage.setItem('slide_img_1', slideConfig.slide_img_1);
+localStorage.setItem('slide_img_2', slideConfig.slide_img_2);
+localStorage.setItem('slide_img_3', slideConfig.slide_img_3);
+localStorage.setItem('ad_img', adConfig.ad_img);
+
+
 // 站点配置（由管理面板自动生成）
 const siteConfig = {
     site_name: '初恋の奇妙屋',
