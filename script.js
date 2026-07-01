@@ -1089,6 +1089,7 @@ const productsData = [
 
 
 
+
 // 站点配置（由管理面板自动生成）
 const siteConfig = {
     site_name: '初恋の奇妙屋',
@@ -1108,17 +1109,17 @@ const slideConfig = {
     slide_1_author: 'CHULIAN',
     slide_1_date: '日期',
     slide_img_1: 'https://tuchuang-aac.pages.dev/api/cfile/AgACAgUAAyEGAATrbgq5AAICZGo6ie9dmfl86Y709Pji-WsjWTxEAAINEGsberXRVfo7ii7aTSiWAQADAgADdwADPAQ',
-    slide_1_url: '',
+    slide_1_url: 'https://share.note.sx/hc2h2848#s9V8SK2UW/rRZ+T1oUvbmg6nTwsibntYofFukbpru2o',
     slide_2_title: '推特网黄 汐梦瑶 大尺度私拍 骚浪小妖精按摩床下偷偷跪舔深喉偷吃肉棒 口爆满嘴浓精一脸满足！【全100.5G】',
     slide_2_author: 'CHULIAN',
     slide_2_date: '日期',
     slide_img_2: 'https://tuchuang-aac.pages.dev/cfile/AgACAgUAAyEGAATrbgq5AAICYmo6iZpHuuIUG3oKcPg2rYgJmtO4AAILEGsberXRVTGcrsH37rpmAQADAgADdwADPAQ',
-    slide_2_url: '',
+    slide_2_url: 'https://share.note.sx/9242runb#EaIQ+z3HElARIUC8U0MiqCezkck9Y+djBwJgykcHUJ0',
     slide_3_title: '饼干姐姐 淫秽新作 调教绿奴老公 丝袜塞逼封精 口交足交凌辱肉棒 多体位交欢化身精液仓库！【全567.30G】',
     slide_3_author: 'CHULIAN',
     slide_3_date: '日期',
     slide_img_3: 'https://tuchuang-aac.pages.dev/cfile/AgACAgUAAyEGAATrbgq5AAICYWo6iRE3FlGp3Z69TDggZh60CBcSAAIKEGsberXRVQ4N8xxZ9V6UAQADAgADdwADPAQ',
-    slide_3_url: ''
+    slide_3_url: 'https://share.note.sx/yjgek3fx#MEdi1x1xtS6d7rMdsr5MlKZjXxf4EmvH9OoHVhUzciY'
 };
 
 // 广告配置
