@@ -1,0 +1,27 @@
+[2026-06-30 19:50:00] 任务: 排查 Cloudflare 部署空白页面问题
+问题: 用户在管理面板设置轮播图和跳转链接后推送至 GitHub，Cloudflare 部署后网站显示空白
+排查过程:
+1. 对比本地 script.js (96052 bytes) 与 GitHub 版本 (94460 bytes) - 大小不同
+2. 发现 GitHub 版本可能存在编码问题（之前诊断说有 2013 个 surrogate 字符）
+3. 重新下载 GitHub script.js 验证：UTF-8 解码正常，无 BOM，无 surrogate 字符
+4. Node.js 语法检查：SYNTAX OK
+5. 函数列表对比：本地和 GitHub 版本完全一致（26 个函数）
+6. productsData 对比：GitHub 版本有 120 个商品项，数据结构正确
+7. HTML 对比：本地 index.html 与 Cloudflare 返回的 HTML 完全一致（13181 chars）
+8. script.js Content-Type: application/javascript（正确）
+9. 重新推送后 GitHub 版本已无编码问题
+结论: 之前确实发生过 base64 编码导致的 surrogate 字符损坏（2013 个坏字符），但后续重新推送已修复。当前 Cloudflare 可能仍缓存旧版本，或部署尚未触发。需确认 Cloudflare Pages 的部署状态。
+教训: pushToGitHub 的 btoa(unescape(encodeURIComponent())) 管道在特定情况下会损坏 UTF-8 中文内容，需监控部署后的文件完整性
+
+[2026-07-01 08:00:00] 任务: 轮播图跳转链接不生效
+问题: 用户在管理面板输入跳转链接并推送至 GitHub 后，Cloudflare 部署的网站点击轮播图无法跳转
+根本原因: 跳转链接分两处存储:
+  1) localStorage 中: slide_url_1/2/3 — 用户浏览器本地存储，不会同步到 GitHub
+  2) slideConfig 默认值: slide_1_url/2_url/3_url — 嵌入在 script.js 中，会随 GitHub 推送同步
+pushToGitHub 只替换了 productsData 数组，没有更新 slideConfig 中的跳转链接，导致部署后 slideConfig 中的值始终为空字符串 ''
+而用户的浏览器 localStorage 是空的（首次访问），fallback 到空的 slideConfig，href 保持为 '#'
+修复: 在 pushToGitHub 中，替换 productsData 后增加 slideConfig 中 slide_url_N 的替换逻辑:
+  - 从 localStorage 读取 slide_url_1/2/3 的值
+  - 在 newContent 中查找 slide_X_url: '...' 模式
+  - 用用户输入的值替换引号内的空字符串
+教训: 配置字段需要同步到两个地方 — localStorage（即时生效）和 script.js 嵌入值（部署后生效）
